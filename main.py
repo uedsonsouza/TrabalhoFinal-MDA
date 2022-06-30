@@ -11,6 +11,7 @@
 #   -> Thiago Emanoel Brito Santos
 ###################################################################################################################################################################################################
 import sympy as sym
+import matplotlib.pyplot as plt
 from os import system
 from random import uniform
 
@@ -37,6 +38,7 @@ class CondParada:
         self.mode = STOP_MODE
         self.parada = False
     
+    # TODO >> Conferir últimos 5 pontos ao invés de apenas o último 
     # 01 Condição de parada baseada no Grandiente. O gradiente sempre é zero no ponto de máximo
     def conferir_parada_grad(self, grd):
         if (abs(grd[0]) < self.limite or abs(grd[1]) < self.limite) : return True
@@ -68,12 +70,13 @@ def otimz_rand(interval):
     pnts = [v]
 
     # Condição de parada
-    cond = CondParada(0.0001) # Tolerância de 0.01%
+    cond = CondParada(0.001) # Tolerância de 0.1%
 
     print('Calculando. Por favor espere...')
     # Loop principal
-    while not cond.parada:
-        d = [uniform(interval[0], interval[1]), uniform(interval[0], interval[1])] # Pontos aleatórios entre n e m
+    while (not cond.parada) and k < MAX:
+        # TODO >> Mudar para variáveis aleatórias nomais ao invés de uniformes
+        d = [uniform(interval[0], interval[1]), uniform(interval[0], interval[1])] # Pontos aleatórios entre n e m OBS: Mudar para normal
 
         p = [ # Pontos com relação de um alpha (direção)
             (v[0] + alpha * d[0]),
@@ -96,14 +99,28 @@ def otimz_rand(interval):
         cond.set_stop( grd = grad(f, x1, x2, v), arg = pnts)
         k += 1
 
+        # TODO >> Atribuir o break no loop while
         # Abortar após grande número de iterações
-        if k >= MAX: break
+        #if k >= MAX: break
     
     # Resultado final
     system('cls')
-    print(f'Ponto ótimo X* = ({v[0]:.4f}, {v[1]:.4f}) | {k} iterações')
+    print(f'{pnts}')
+    print(f'Ponto ótimo X* = ({v[0]}, {v[1]}) | {k} iterações')
 
+    # TODO >> Plot em 3D
     # Plot do gráfico
+    x = []
+    for x_i in range(len(pnts)): x.append(x_i)
+
+    figure, axis = plt.subplots(2, 1)
+    axis[0].plot(x, pnts)
+    axis[0].set_title("f(x₁, x₂) x Iteração")
+
+    plt.show()
+    
+
+
 
 # Roda o programa
 if __name__ == '__main__':
